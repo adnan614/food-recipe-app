@@ -1,25 +1,44 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import "../src/App.css";
+import Header from "./components/Header";
+import Recipes from "./components/Recipes";
+import Axios from "axios";
 
-function App() {
+const App = () => {
+  const [search, setSearch] = useState("");
+  const [recipes, setRecipes] = useState([]);
+
+  const url = `https://www.themealdb.com/api/json/v1/1/filter.php?i=${search}`;
+
+  useEffect(async () => {
+    getRecipes();
+  }, []);
+
+  const getRecipes = async () => {
+    const res = await Axios.get(url);
+    setRecipes(res.data.meals);
+  };
+
+  const inputChange = (e) => {
+    setSearch(e.target.value);
+  };
+
+//   const searchClick = () => {
+//     getRecipes();
+//   };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Header
+        search={search}
+        inputChange={inputChange}
+        // onSearchClick={searchClick}
+      />
+      <div className="container">
+        <Recipes recipes={recipes} search={search} />
+      </div>
+    </>
   );
-}
+};
 
 export default App;
